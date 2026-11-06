@@ -1,0 +1,151 @@
+@model BookStore.ViewModels.HomeViewModel
+
+@{
+    ViewData["Title"] = "Home";
+}
+
+<h1 class="mb-2">Welcome to Book Store</h1>
+<p class="intro mb-4">Add books and authors to your collection.</p>
+
+<div class="row g-3">
+    <div class="col-md-6">
+        <div class="form-box">
+            <h3>Add Book</h3>
+            <form method="post" action="/Home/AddBook">
+                <label class="form-label">Title</label>
+                <input type="text" name="title" class="form-control" required />
+
+                <label class="form-label mt-2">Price</label>
+                <input type="number" name="price" class="form-control" min="0" step="0.01" required />
+
+                <label class="form-label mt-2">Author</label>
+                <select name="authorId" class="form-select" required>
+                    @foreach (var author in Model.Authors)
+                    {
+                        <option value="@author.Id">@author.Name</option>
+                    }
+                </select>
+
+                <button type="submit" class="btn add-button mt-3">Add Book</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="form-box">
+            <h3>Add Author</h3>
+            <form method="post" action="/Home/AddAuthor">
+                <label class="form-label">Name</label>
+                <input type="text" name="name" class="form-control" required />
+
+                <label class="form-label mt-2">Country</label>
+                <input type="text" name="country" class="form-control" required />
+
+                <button type="submit" class="btn add-button mt-3">Add Author</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<h2 class="mt-5 mb-3">Available Books</h2>
+
+@if (Model.Books.Count > 0)
+{
+    <div class="row g-3">
+        @foreach (var book in Model.Books)
+        {
+            <div class="col-md-4">
+                <div class="book-card">
+                    <h4>@book.Title</h4>
+                    <p class="mb-1">Author: @book.AuthorName</p>
+                    <p>Price: PKR @book.Price</p>
+
+                    <form method="post" action="/Home/RemoveBook"
+                          onsubmit="return confirmRemove();">
+                        <input type="hidden" name="id" value="@book.Id" />
+                        <button type="submit" class="btn remove-button">Remove</button>
+                    </form>
+                </div>
+            </div>
+        }
+    </div>
+}
+else
+{
+    <p>No books available.</p>
+}
+
+@section Styles {
+    <style>
+        .intro {
+            color: #94A3B8;
+        }
+
+        .form-box, .book-card {
+            background-color: #151D32;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 20px;
+        }
+
+        .form-box h3, .book-card h4 {
+            color: #C4B5FD;
+        }
+
+        .form-control, .form-select {
+            background-color: #0B1020;
+            color: #F1F5F9;
+            border: 1px solid #475569;
+        }
+
+        .form-control:focus, .form-select:focus {
+            background-color: #0B1020;
+            color: #F1F5F9;
+            border-color: #A78BFA;
+            box-shadow: none;
+        }
+
+        .form-select option {
+            background-color: #151D32;
+            color: #F1F5F9;
+        }
+
+        .add-button {
+            background-color: #8B5CF6;
+            color: white;
+        }
+
+        .add-button:hover {
+            background-color: #7C3AED;
+            color: white;
+        }
+
+        .book-card {
+            margin-bottom: 5px;
+            width: 100%;
+        }
+
+        .book-card p {
+            color: #CBD5E1;
+        }
+
+        .remove-button {
+            background-color: transparent;
+            color: #FCA5A5;
+            border: 1px solid #A44B5A;
+        }
+
+        .remove-button:hover {
+            background-color: #A44B5A;
+            color: white;
+        }
+    </style>
+}
+
+@section Scripts {
+    <script>
+        function confirmRemove() {
+            return confirm("Remove this book?");
+        }
+    </script>
+}
